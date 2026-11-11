@@ -1,4 +1,4 @@
-import math
+from math import cos, sin, tan
 
 
 class Vehicle:
@@ -26,9 +26,9 @@ class Vehicle:
     #   dt: simulation time step
     #   delta: front wheel steering angle
     def update(self, dt: float, delta: float) -> None:
-        self.x = self.x + self.v * math.cos(self.yaw) * dt
-        self.y = self.y + self.v * math.sin(self.yaw) * dt
-        self.yaw = self.yaw + (self.v / self.l) * math.tan(delta) * dt
+        self.x = self.x + self.v * cos(self.yaw) * dt
+        self.y = self.y + self.v * sin(self.yaw) * dt
+        self.yaw = self.yaw + (self.v / self.l) * tan(delta) * dt
 
     def __str__(self):
         return (
