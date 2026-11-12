@@ -3,37 +3,36 @@ from math import cos, sin, tan
 
 class Vehicle:
 
-    # Vehicle contructor
-    #
-    # param:
-    #   x :
-    #   y :
-    #   yaw: rotation around the y-axis (radians)
-    #   v: velocity
-    #   l: wheelBase - distance between front centre to back wheel centre
-    def __init__(self, x: float, y: float, yaw: float, v: float, l: float) -> None:
+    def __init__(
+        self, x: float, y: float, yaw: float, velocity: float, wheelbase: float
+    ) -> None:
+        """
+        Vehicle contructor
+
+        yaw: rotation around the y-axis (radians)
+        wheelbase: distance between front centre to back wheel centre
+        """
         self.x = x
         self.y = y
         self.yaw = yaw
-        self.v = v
-        self.l = l
+        self.velocity = velocity
+        self.wheelbase = wheelbase
 
-    # update()
-    #
-    # update the state of the vehicle
-    #
-    # param:
-    #   dt: simulation time step
-    #   delta: front wheel steering angle
     def update(self, dt: float, delta: float) -> None:
-        self.x = self.x + self.v * cos(self.yaw) * dt
-        self.y = self.y + self.v * sin(self.yaw) * dt
-        self.yaw = self.yaw + (self.v / self.l) * tan(delta) * dt
+        """
+        update the state of the vehicle
+
+        dt: simulation time step
+        delta: front wheel steering angle
+        """
+        self.x = self.x + self.velocity * cos(self.yaw) * dt
+        self.y = self.y + self.velocity * sin(self.yaw) * dt
+        self.yaw = self.yaw + (self.velocity / self.wheelbase) * tan(delta) * dt
 
     def __str__(self):
         return (
             f"Car: ({self.x}, {self.y}),"
             f"yaw: {self.yaw},"
-            f"velocity: {self.v},"
-            f"wheelBase: {self.l}"
+            f"velocity: {self.velocity},"
+            f"wheelBase: {self.wheelbase}"
         )
