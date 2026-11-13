@@ -8,7 +8,7 @@ import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
 from matplotlib.artist import Artist
 
-from controller import Control 
+from controller import Control
 from track import Track
 from vehicle import Vehicle
 
@@ -18,14 +18,13 @@ l = 1.6
 ld = 3
 duration = 30
 car = Vehicle(1, 1, 0, v, l)
-track = Track.s_track_gen(40, 20)
-
+# track = Track.s_track_gen(40, 20)
+track = Track.load_csv_track("./tracks/edgecase_waypoints.csv")
 
 
 def main() -> None:
-    matplotlib.use("QTAgg")
-    plt.style.use("./mplstyles/nord-dark-talk.mplstyle")
-
+    # matplotlib.use("QTAgg")
+    # plt.style.use("./mplstyles/nord-dark-talk.mplstyle")
     fig, axis = plt.subplots()
     (line,) = axis.plot([], [], lw=3)
     axis.set_xlim(-20, 20)
