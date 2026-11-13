@@ -17,11 +17,8 @@ class Control:
         """
         return delta the amount to steer, to get to target_point
         """
-        delta_x = (
-            (target_point[0] - car.x)
-            if abs(target_point[0] - car.x) > 0.001
-            else 0.001
-        )
+        delta_x = target_point[0] - car.x
+        delta_x = (delta_x) if abs(delta_x) > 0.001 else 0.001
         alpha = atan2((target_point[1] - car.y), delta_x) - car.yaw
         delta = atan2(2 * car.wheelbase * sin(alpha), ld)
         return delta
