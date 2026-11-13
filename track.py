@@ -1,4 +1,6 @@
+from csv import DictReader
 from math import cos, pi, sin
+from os import PathLike
 from typing import Tuple
 
 
@@ -49,4 +51,23 @@ class Track:
             theta += d_theta
             track.append((x, y))
 
+        return track
+
+    @staticmethod
+    def load_csv_track(path: str | PathLike[str]) -> list[Tuple[float, float]]:
+        """
+        load the track from a csv file
+        """
+        track: list[Tuple[float, float]] = []
+        with open(path, encoding="utf-8") as waypoints:
+            reader = DictReader(waypoints, skipinitialspace=True)
+            for row in reader:
+                try:
+                    x = float(row["x"])
+                    y = float(row["y"])
+                except (KeyError, ValueError, TypeError) as error:
+                    raise ValueError(
+                        f"Bad waypoint on line {reader.line_num}: {row}"
+                    ) from error
+                track.append((x, y))
         return track
