@@ -47,8 +47,7 @@ class Control:
         dx = pt2[0] - pt1[0]
         dy = pt2[1] - pt1[1]
         dr = sqrt(dx**2 + dy**2)
-        if dr <= 0.001:
-            dr = 0.001
+        dr = max(dr, 0.001)
         x1_offset = pt1[0] - current_pos[0]
         y1_offset = pt1[1] - current_pos[1]
         x2_offset = pt2[0] - current_pos[0]
@@ -71,6 +70,8 @@ class Control:
             True,
         )
 
+    target_pt: point_t = (0, 0)
+
     @staticmethod
     def get_target_point(
         current_pos: point_t, look_ahead_dist: float, pt1: point_t, pt2: point_t
@@ -87,12 +88,44 @@ class Control:
                 pt2,
             )
         )
+        minX = min(pt1[0], pt2[0])
+        minY = min(pt1[1], pt2[1])
+        maxX = max(pt1[0], pt2[0])
+        maxY = max(pt1[1], pt2[1])
+        dist_pt2_target1 = __class__.distance(pt2, target_point1)
+        dist_pt2_target2 = __class__.distance(pt2, target_point2)
+        dist_pt1_car = __class__.distance(pt1, current_pos)
+        dist_pt2_car = __class__.distance(pt2, current_pos)
 
         if not intersection_found:
-            return pt1
+            return __class__.point_to_line_seg(current_pos, pt1, pt2)
 
-        dist_point1 = __class__.distance(pt2, target_point1)
-        dist_point2 = __class__.distance(pt2, target_point2)
-        if dist_point1 >= dist_point2:
+        target1_x_inbound = minX <= target_point1[0] <= maxX
+        target1_y_inbound = minY <= target_point1[1] <= maxY
+        target1_inbound = target1_x_inbound and target1_y_inbound
+        target2_x_inbound = minX <= target_point2[0] <= maxX
+        target2_y_inbound = minY <= target_point2[1] <= maxY
+        target2_inbound = target2_x_inbound and (target2_y_inbound)
+
+        if target1_inbound and target2_inbound:
+            return (
+                target_point1
+                if (dist_pt2_target1 < dist_pt2_target2)
+                else target_point2
+            )
+        if target1_inbound:
+            return target_point1
+        if target2_inbound:
             return target_point2
-        return target_point1
+        return pt1 if dist_pt1_car < dist_pt2_car else pt2
+
+    @staticmethod
+    def point_to_line_seg(current_pos: point_t, pt1: point_t, pt2: point_t) -> point_t:
+        dx = pt2[0] - pt1[0]
+        dy = pt2[1] - pt1[1]
+        denominator = dx**2 + dy**2
+        if denominator == 0:
+            return pt1
+        numerator = (current_pos[0] - pt1[0]) * dx + (current_pos[1] - pt1[1]) * dy
+        t = max(0.0, min(numerator / denominator, 1.0))
+        return (pt1[0] + t * dx, pt1[1] + t * dy)
