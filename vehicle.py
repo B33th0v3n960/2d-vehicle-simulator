@@ -1,4 +1,4 @@
-from math import cos, sin, tan
+from math import cos, sin, tan, pi
 
 
 class Vehicle:
@@ -24,7 +24,12 @@ class Vehicle:
 
         dt: simulation time step
         delta: front wheel steering angle
+
+        delta_lim = pi/3
         """
+        delta_lim = pi/3
+        delta = max(delta, -delta_lim)
+        delta = min(delta, delta_lim)
         self.x = self.x + self.velocity * cos(self.yaw) * dt
         self.y = self.y + self.velocity * sin(self.yaw) * dt
         self.yaw = self.yaw + (self.velocity / self.wheelbase) * tan(delta) * dt
