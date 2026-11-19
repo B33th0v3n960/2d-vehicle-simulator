@@ -121,11 +121,34 @@ class Control:
 
     @staticmethod
     def point_to_line_seg(current_pos: point_t, pt1: point_t, pt2: point_t) -> point_t:
+        """
+        Find the point on line segment pt1 to pt2, that yields the short path
+        from current_pos to it.
+        If pt1 == pt2: return pt1
+        """
         dx = pt2[0] - pt1[0]
         dy = pt2[1] - pt1[1]
         denominator = dx**2 + dy**2
         if denominator == 0:
             return pt1
         numerator = (current_pos[0] - pt1[0]) * dx + (current_pos[1] - pt1[1]) * dy
-        t = max(0.0, min(numerator / denominator, 1.0))
+        t = max(0.0, min(numerator / denominator + 0.1, 1.0))
         return (pt1[0] + t * dx, pt1[1] + t * dy)
+
+    @staticmethod
+    def target_speed(car: Vehicle, ld: float, target_point: point_t) -> float:
+        """
+        calculate the speed based on the turn angle towards the target point
+
+        v_max = 200
+        v_min = 2
+        a_lat_max = 20
+        """
+        a_lat_max = 5
+        v_max = 100
+        v_min = 2
+        alpha = atan2(target_point[1] - car.y, target_point[0] - car.x) - car.yaw
+        kappa = abs(2 * sin(alpha) / ld)
+        kappa = max(kappa, 1e-3)
+        v = sqrt(a_lat_max / kappa)
+        return min(v_max, max(v, v_min))
