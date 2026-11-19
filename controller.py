@@ -145,7 +145,7 @@ class Control:
         a_lat_max = 20
         """
         a_lat_max = 5
-        v_max = 100
+        v_max = 20
         v_min = 2
         alpha = atan2(target_point[1] - car.y, target_point[0] - car.x) - car.yaw
         kappa = abs(2 * sin(alpha) / ld)
